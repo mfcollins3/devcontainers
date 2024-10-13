@@ -1,0 +1,19 @@
+{
+    "id": "dartsass",
+    "version": "0.1.0",
+    "name": "Dart Sass",
+    "description": "Installs Dart Sass for compiling SCSS files",
+    "licenseURL": "https://github.com/mfcollins3/devcontainers/LICENSE.md",
+    "keywords": [
+        "css",
+        "sass",
+        "scss"
+    ],
+    "options": {
+        "version": {
+            "type": "string",
+            "default": "latest",
+            "description": "The version of Dart Sass to install"
+        }
+    },
+}
