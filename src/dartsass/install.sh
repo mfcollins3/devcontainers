@@ -111,6 +111,7 @@ else
 fi
 
 dartsass_filename="dart-sass-${VERSION}-linux-${arch}.tar.gz"
+echo "Downloading ${dartsass_filename}..."
 curl -fsSLO --compressed "https://github.com/sass/dart-sass/releases/download/${VERSION}/${dartsass_filename}"
 tar -xzf "$dartsass_filename" -C "$DARTSASS_DIR"
 rm "$dartsass_filename"
