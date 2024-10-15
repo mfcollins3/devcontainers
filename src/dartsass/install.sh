@@ -32,6 +32,19 @@ USERNAME="${USERNAME:-"${_REMOTE_USER:-"automatic"}"}"
 UPDATE_RC="${UPDATE_RC:-"true"}"
 DARTSASS_DIR="${DARTSASS_DIR:-"/usr/local/dartsass"}"
 
+# Clean up
+rm -rf /var/lib/apt/lists/*
+
+if [ "$(id -u)" -ne 0 ]; then
+    echo -e 'Script must be run as root. Use sudo, su, or add "USER root" to your Dockerfile before running this script.'
+    exit 1
+fi
+
+# Ensure that login shells get the correct path if the user updated the PATH using ENV.
+rm -f /etc/profile.d/00-restore-env.sh
+echo "export PATH=${PATH//$(sh -lc 'echo $PATH')/\$PATH}" > /etc/profile.d/00-restore-env.sh
+chmod +x /etc/profile.d/00-restore-env.sh
+
 if [ "${USERNAME}" = "auto" ] || [ "${USERNAME}" = "automatic" ]; then
     USERNAME=""
     POSSIBLE_USERS=("vscode" "node" "codespace" "$(awk -v val=1000 -F ":" '$3==val{print $1}' /etc/passwd)")
@@ -54,10 +67,6 @@ if [ "${architecture}" != "amd64" ] && [ "${architecture}" != "x86_64" ] && [ "$
     exit 1
 fi
 
-if [ "${VERSION}" = "latest" ]; then
-    export VERSION=$(curl -s https://api.github.com/repos/sass/dart-sass/releases/latest | grep "tag_name" | awk '{print substr($2, 3, length($2)-4)}')
-fi
-
 updaterc() {
     if [ "${UPDATE_RC}" = "true" ]; then
         echo "Updating /etc/bash.bashrc and /etc/zsh/zshrc..."
@@ -70,23 +79,43 @@ updaterc() {
     fi
 }
 
+apt_get_update()
+{
+    if [ "$(find /var/lib/apt/lists/* | wc -l)" = "0" ]; then
+        echo "Running apt-get update..."
+        apt-get update -y
+    fi
+}
+
+# Checks if packages are installed and installs them if not
+check_packages() {
+    if ! dpkg -s "$@" > /dev/null 2>&1; then
+        apt_get_update
+        apt-get -y install --no-install-recommends "$@"
+    fi
+}
+
+# Install dependencies
+check_packages curl ca-certificates tar
+
+if [ "${VERSION}" = "latest" ]; then
+    export VERSION=$(curl -s https://api.github.com/repos/sass/dart-sass/releases/latest | grep "tag_name" | awk '{print substr($2, 2, length($2)-3)}')
+fi
+
 mkdir -p "${DARTSASS_DIR}"
 
 if [ "$(uname -m)" == "aarch64" ]; then
-    arch="ARM64"
+    arch="arm64"
 else
     arch="64bit"
 fi
 
-dartsass_filename = "dart-sass-${VERSION}-linux-${arch}.tar.gz"
-curl -fsSLO --compressed "https://github.com/sass/dart-sass/releases/download/v${VERSION}/${dartsass_filename}"
+dartsass_filename="dart-sass-${VERSION}-linux-${arch}.tar.gz"
+curl -fsSLO --compressed "https://github.com/sass/dart-sass/releases/download/${VERSION}/${dartsass_filename}"
 tar -xzf "$dartsass_filename" -C "$DARTSASS_DIR"
 rm "$dartsass_filename"
 
 updaterc "export DARTSASS_DIR=${DARTSASS_DIR}"
-
-chown -R "${USERNAME}:sass" "${DARTSASS_DIR}"
-chmod -R g+r+w "${DARTSASS_DIR}"
-find "${DARTSASS_DIR}" -type d -print0 | xargs -n 1 -0 chmod g+s
+updaterc "export PATH=\$PATH:\$DARTSASS_DIR"
 
 echo "Done!"
