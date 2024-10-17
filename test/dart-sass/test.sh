@@ -29,6 +29,6 @@ set -e
 
 source dev-container-features-test-lib
 
-check "sass version" /usr/local/dartsass/sass --version
+check "sass version" sass --version
 
 reportResults

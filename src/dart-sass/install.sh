@@ -30,7 +30,7 @@ set -e
 VERSION="${VERSION:-"latest"}"
 USERNAME="${USERNAME:-"${_REMOTE_USER:-"automatic"}"}"
 UPDATE_RC="${UPDATE_RC:-"true"}"
-DARTSASS_DIR="${DARTSASS_DIR:-"/usr/local/dartsass"}"
+DARTSASS_DIR="${DARTSASS_DIR:-"/usr/local/dart-sass"}"
 
 # Clean up
 rm -rf /var/lib/apt/lists/*
@@ -95,6 +95,11 @@ check_packages() {
     fi
 }
 
+if ! cat /etc/group | grep -e "^dartsass:" > /dev/null 2>&1; then
+    groupadd -r dartsass
+fi
+usermod -a -G dartsass "${USERNAME}"
+
 # Install dependencies
 check_packages curl ca-certificates tar
 
@@ -114,10 +119,17 @@ dartsass_filename="dart-sass-${VERSION}-linux-${arch}.tar.gz"
 dartsass_url="https://github.com/sass/dart-sass/releases/download/${VERSION}/${dartsass_filename}"
 echo "Downloading ${dartsass_url}..."
 curl -fsSLO --compressed "${dartsass_url}"
-tar -xzf "$dartsass_filename" -C "$DARTSASS_DIR"
+tar -xzf "${dartsass_filename}" -C "${DARTSASS_DIR}"
 rm "$dartsass_filename"
 
 updaterc "export DARTSASS_DIR=${DARTSASS_DIR}"
-updaterc "export PATH=\$PATH:\$DARTSASS_DIR"
+updaterc "export PATH=\$PATH:\$DARTSASS_DIR/dart-sass"
+
+chown -R "${USERNAME}:dartsass" "${DARTSASS_DIR}"
+chmod -R g+r+w "${DARTSASS_DIR}"
+find "${DARTSASS_DIR}" -type d -print0 | xargs -n 1 -0 chmod g+s
+
+# Clean up
+rm -rf /var/lib/apt/lists/*
 
 echo "Done!"

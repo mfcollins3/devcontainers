@@ -1,5 +1,5 @@
 {
-    "id": "dartsass",
+    "id": "dart-sass",
     "version": "0.1.0",
     "name": "Dart Sass",
     "description": "Installs Dart Sass for compiling SCSS files",
