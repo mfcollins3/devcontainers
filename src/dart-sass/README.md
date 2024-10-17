@@ -10,10 +10,9 @@ To install Dart Sass into your development container, add it as a feature to you
 
 ```json
 {
-    // ...
     "features": {
         "ghcr.io/mfcollins3/devcontainers/dart-sass:0": {
-            // [options]
+            "version": "latest"
         }
     }
 }
@@ -21,7 +20,7 @@ To install Dart Sass into your development container, add it as a feature to you
 
 The `[options]` block indicates the optional presence of options that control the installation of Dart Sass. Currently, the only available option is `version`:
 
-- `version`: the version number of Dart Sass to be installed into the development container. If not specified, the latest version of Dart Sass is installed.
+- `version`: the version number of Dart Sass to be installed into the development container. If not specified or if specified as `latest`, the latest version of Dart Sass will be downloaded from GitHub and installed.
 
 ## Development Container Effects
 
