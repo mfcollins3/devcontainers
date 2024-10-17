@@ -107,7 +107,7 @@ mkdir -p "${DARTSASS_DIR}"
 if [ "$(uname -m)" == "aarch64" ]; then
     arch="arm64"
 else
-    arch="64bit"
+    arch="x64"
 fi
 
 dartsass_filename="dart-sass-${VERSION}-linux-${arch}.tar.gz"
