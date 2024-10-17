@@ -30,7 +30,7 @@ set -e
 VERSION="${VERSION:-"latest"}"
 USERNAME="${USERNAME:-"${_REMOTE_USER:-"automatic"}"}"
 UPDATE_RC="${UPDATE_RC:-"true"}"
-DARTSASS_DIR="${DARTSASS_DIR:-"/usr/local/dart-sass"}"
+DARTSASS_DIR="${DARTSASS_DIR:-"/usr/local"}"
 
 # Clean up
 rm -rf /var/lib/apt/lists/*
@@ -122,7 +122,7 @@ curl -fsSLO --compressed "${dartsass_url}"
 tar -xzf "${dartsass_filename}" -C "${DARTSASS_DIR}"
 rm "$dartsass_filename"
 
-updaterc "export DARTSASS_DIR=${DARTSASS_DIR}"
+updaterc "export DARTSASS_DIR=${DARTSASS_DIR}/dart-sass"
 updaterc "export PATH=\$PATH:\$DARTSASS_DIR/dart-sass"
 
 chown -R "${USERNAME}:dartsass" "${DARTSASS_DIR}"
