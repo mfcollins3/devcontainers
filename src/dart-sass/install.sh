@@ -31,6 +31,7 @@ VERSION="${VERSION:-"latest"}"
 USERNAME="${USERNAME:-"${_REMOTE_USER:-"automatic"}"}"
 UPDATE_RC="${UPDATE_RC:-"true"}"
 DARTSASS_DIR="${DARTSASS_DIR:-"/usr/local"}"
+INSTALL_DIR="${DARTSASS_DIR}/dart-sass"
 
 # Clean up
 rm -rf /var/lib/apt/lists/*
@@ -122,12 +123,12 @@ curl -fsSLO --compressed "${dartsass_url}"
 tar -xzf "${dartsass_filename}" -C "${DARTSASS_DIR}"
 rm "$dartsass_filename"
 
-updaterc "export DARTSASS_DIR=${DARTSASS_DIR}/dart-sass"
-updaterc "export PATH=\$PATH:\$DARTSASS_DIR/dart-sass"
+updaterc "export DARTSASS_DIR=${INSTALL_DIR}"
+updaterc "export PATH=\$PATH:\$DARTSASS_DIR"
 
-chown -R "${USERNAME}:dartsass" "${DARTSASS_DIR}"
-chmod -R g+r+w "${DARTSASS_DIR}"
-find "${DARTSASS_DIR}" -type d -print0 | xargs -n 1 -0 chmod g+s
+chown -R "${USERNAME}:dartsass" "${INSTALL_DIR}"
+chmod -R g+r+w "${INSTALL_DIR}"
+find "${INSTALL_DIR}" -type d -print0 | xargs -n 1 -0 chmod g+s
 
 # Clean up
 rm -rf /var/lib/apt/lists/*
