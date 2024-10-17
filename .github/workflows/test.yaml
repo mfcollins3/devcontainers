@@ -13,7 +13,7 @@ jobs:
     strategy:
       matrix:
         features:
-          - dartsass
+          - dart-sass
         baseImage:
           - debian:latest
           - ubuntu:latest
@@ -33,7 +33,7 @@ jobs:
     strategy:
       matrix:
         features:
-          - dartsass
+          - dart-sass
     steps:
       - uses: actions/checkout@v4
 
