@@ -10,10 +10,10 @@ To install Dart Sass into your development container, add it as a feature to you
 
 ```json
 {
-    ...
+    // ...
     "features": {
         "ghcr.io/mfcollins3/devcontainers/dart-sass:0": {
-            [options]
+            // [options]
         }
     }
 }
